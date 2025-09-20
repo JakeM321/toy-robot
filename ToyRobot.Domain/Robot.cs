@@ -51,6 +51,25 @@ internal class Robot
         }
     }
 
+    public void TurnRight()
+    {
+        switch (_directionFacing)
+        {
+            case Direction.North:
+                _directionFacing = Direction.East;
+                break;
+            case Direction.East:
+                _directionFacing = Direction.South;
+                break;
+            case Direction.South:
+                _directionFacing = Direction.West;
+                break;
+            case Direction.West:
+                _directionFacing = Direction.North;
+                break;
+        }
+    }
+
     public bool TryMove()
     {
         var proposedXMove = _posX;

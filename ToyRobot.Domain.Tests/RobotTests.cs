@@ -35,6 +35,9 @@ public class RobotTests
 
     [BddfyTheory]
     [InlineData(1, 4)]
+    [InlineData(2, 1)]
+    [InlineData(3, 2)]
+    [InlineData(4, 3)]
     public void LeftTurnResultsInCorrectDirection(int initialDirection, int expectedDirection)
     {
         var initialDirectionEnum = (Direction)initialDirection;
@@ -42,6 +45,22 @@ public class RobotTests
         this.Given(s => s.AMovementCoordinatorAllowingAnyMove())
             .And(s => s.ARobotPlacedAt(0, 0, initialDirectionEnum), "And a robot facing {2}")
             .When(s => s.TheRobotTurnLeftMethodIsInvoked())
+            .Then(s => s.RobotPositionIs(0, 0, expectedDirectionEnum), "Then the robot now faces {2}")
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData(1, 2)]
+    [InlineData(2, 3)]
+    [InlineData(3, 4)]
+    [InlineData(4, 1)]
+    public void RightTurnResultsInCorrectDirection(int initialDirection, int expectedDirection)
+    {
+        var initialDirectionEnum = (Direction)initialDirection;
+        var expectedDirectionEnum = (Direction)expectedDirection;
+        this.Given(s => s.AMovementCoordinatorAllowingAnyMove())
+            .And(s => s.ARobotPlacedAt(0, 0, initialDirectionEnum), "And a robot facing {2}")
+            .When(s => s.TheRobotTurnRightMethodIsInvoked())
             .Then(s => s.RobotPositionIs(0, 0, expectedDirectionEnum), "Then the robot now faces {2}")
             .BDDfy();
     }
@@ -81,6 +100,10 @@ public class RobotTests
     private void TheRobotTurnLeftMethodIsInvoked()
     {
         _robot.TurnLeft();
+    }
+    private void TheRobotTurnRightMethodIsInvoked()
+    {
+        _robot.TurnRight();
     }
     #endregion
     #region Then
