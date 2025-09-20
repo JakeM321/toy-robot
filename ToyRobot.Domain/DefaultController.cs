@@ -50,12 +50,18 @@ internal class DefaultController : IDefaultController
 
     public Result Left()
     {
-        throw new NotImplementedException();
+        if (_robot == null)
+            return Result.InitialPlacementMissing;
+        _robot.TurnLeft();
+        return Result.Ok;
     }
 
     public Result Right()
     {
-        throw new NotImplementedException();
+        if (_robot == null)
+            return Result.InitialPlacementMissing;
+        _robot.TurnRight();
+        return Result.Ok;
     }
 
     public Coordinates? Report()

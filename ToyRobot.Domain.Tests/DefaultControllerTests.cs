@@ -95,6 +95,60 @@ public class DefaultControllerTests
             .BDDfy();
     }
 
+    [BddfyFact]
+    public void CallingLeftWithoutPlacementReturnsError()
+    {
+        this.Given(s => s.ADefaultController())
+            .When(s => s.LeftIsCalled())
+            .Then(s => s.TheResultIs(Result.InitialPlacementMissing))
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData(1, 4)]
+    [InlineData(2, 1)]
+    [InlineData(3, 2)]
+    [InlineData(4, 3)]
+    public void CallingLeftUpdatesDirectionAndReturnsOk(int initialDirection, int expectedDirection)
+    {
+        var initialDirectionEnum = (Direction)initialDirection;
+        var expectedDirectionEnum = (Direction)expectedDirection;
+        this.Given(s => s.ADefaultController())
+            .When(s => s.PlaceIsCalledWith(0, 0, initialDirectionEnum))
+            .And(s => s.LeftIsCalled())
+            .And(s => s.ReportIsCalled())
+            .Then(s => s.TheReportedPositionIs(0, 0, expectedDirectionEnum))
+            .And(s => s.TheResultIs(Result.Ok))
+            .BDDfy();
+    }
+
+    [BddfyFact]
+    public void CallingRightWithoutPlacementReturnsError()
+    {
+        this.Given(s => s.ADefaultController())
+            .When(s => s.RightIsCalled())
+            .Then(s => s.TheResultIs(Result.InitialPlacementMissing))
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData(1, 2)]
+    [InlineData(2, 3)]
+    [InlineData(3, 4)]
+    [InlineData(4, 1)]
+    public void CallingRightUpdatesDirectionAndReturnsOk(int initialDirection, int expectedDirection)
+    {
+        var initialDirectionEnum = (Direction)initialDirection;
+        var expectedDirectionEnum = (Direction)expectedDirection;
+        this.Given(s => s.ADefaultController())
+            .When(s => s.PlaceIsCalledWith(0, 0, initialDirectionEnum))
+            .And(s => s.RightIsCalled())
+            .And(s => s.ReportIsCalled())
+            .Then(s => s.TheReportedPositionIs(0, 0, expectedDirectionEnum))
+            .And(s => s.TheResultIs(Result.Ok))
+            .BDDfy();
+    }
+
     #region BDDfy
     #region Data
     private DefaultController _controller;
@@ -119,6 +173,14 @@ public class DefaultControllerTests
     private void MoveIsCalled()
     {
         _result = _controller.Move();
+    }
+    private void LeftIsCalled()
+    {
+        _result = _controller.Left();
+    }
+    private void RightIsCalled()
+    {
+        _result = _controller.Right();
     }
     #endregion
     #region Then
