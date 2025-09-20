@@ -165,8 +165,6 @@ public class DefaultSessionTests
     [InlineData("rEpOrT ", 1, 2, 2, "1,2,EAST")]
     [InlineData("report", 5, 3, 3, "5,3,SOUTH")]
     [InlineData("report", 7, 1, 4, "7,1,WEST")]
-    //CannotReportInitialPlacementMissing
-    
     public void ProcessesReportCommand(string command, int xPos, int yPos, int direction, string expectedMessage)
     {
         this.Given(s => s.AMockControllerReportingCoordinates(xPos, yPos, (Direction)direction))

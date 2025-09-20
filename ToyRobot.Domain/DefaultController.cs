@@ -20,7 +20,7 @@ internal interface IDefaultController
 
 internal class DefaultController : IDefaultController
 {
-    private TableTop _tableTop;
+    private readonly TableTop _tableTop;
     private Robot? _robot;
     public DefaultController()
     {
