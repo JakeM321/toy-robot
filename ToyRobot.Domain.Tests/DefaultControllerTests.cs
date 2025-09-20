@@ -45,6 +45,15 @@ public class DefaultControllerTests
             .BDDfy();
     }
 
+    [BddfyFact]
+    public void CallingReportWithoutPlacementReturnsError()
+    {
+        this.Given(s => s.ADefaultController())
+            .When(s => s.ReportIsCalled())
+            .Then(s => s.TheReportedPositionIsNull())
+            .BDDfy();
+    }
+
     #region BDDfy
     #region Data
     private DefaultController _controller;
@@ -77,6 +86,10 @@ public class DefaultControllerTests
         Assert.Equal(_reportedPosition.XPosition, xPos);
         Assert.Equal(_reportedPosition.YPosition, yPos);
         Assert.Equal(_reportedPosition.FDirection, direction);
+    }
+    private void TheReportedPositionIsNull()
+    {
+        Assert.Null(_reportedPosition);
     }
     #endregion
     #endregion

@@ -101,7 +101,7 @@ public class DefaultSessionTests
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.ResponseIsReturned(Constants.Messages.InitialPlacementMissing), "The following response is returned: \"{0}\"")
+            .Then(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing), "The following response is returned: \"{0}\"")
             .BDDfy();
     }
 
@@ -165,6 +165,8 @@ public class DefaultSessionTests
     [InlineData("rEpOrT ", 1, 2, 2, "1,2,EAST")]
     [InlineData("report", 5, 3, 3, "5,3,SOUTH")]
     [InlineData("report", 7, 1, 4, "7,1,WEST")]
+    //CannotReportInitialPlacementMissing
+    
     public void ProcessesReportCommand(string command, int xPos, int yPos, int direction, string expectedMessage)
     {
         this.Given(s => s.AMockControllerReportingCoordinates(xPos, yPos, (Direction)direction))
@@ -173,6 +175,19 @@ public class DefaultSessionTests
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.TheControllerReportMethodIsCalled())
             .And(s => s.ResponseIsReturned(expectedMessage))
+            .BDDfy();
+    }
+
+    [BddfyFact]
+    public void ReportReturnsErrorWhenPlacementMissing()
+    {
+        this.Given(s => s.AMockControllerWithNoCoordinatesToReport())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("REPORT"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerReportMethodIsCalled())
+            .And(s => s.ResponseIsReturned(Constants.Messages.CannotReportInitialPlacementMissing), 
+                "and the following response is returned: \"{0}\"")
             .BDDfy();
     }
 
@@ -205,6 +220,13 @@ public class DefaultSessionTests
         _controller
             .Setup(c => c.Report())
             .Returns(new Coordinates(xPos, yPos, direction));
+    }
+    private void AMockControllerWithNoCoordinatesToReport()
+    {
+        _controller = new Mock<IDefaultController>();
+        _controller
+            .Setup(c => c.Report())
+            .Returns((Coordinates?)null);
     }
     private void AMockControllerWithOutOfBoundsResult()
     {

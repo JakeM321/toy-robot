@@ -15,13 +15,13 @@ internal interface IDefaultController
     Result Move();
     void Left();
     void Right();
-    Coordinates Report();
+    Coordinates? Report();
 }
 
 internal class DefaultController : IDefaultController
 {
     private TableTop _tableTop;
-    private Robot _robot;
+    private Robot? _robot;
     public DefaultController()
     {
         _tableTop = new TableTop(Constants.DefaultTableTopSize.X, Constants.DefaultTableTopSize.Y);
@@ -50,8 +50,10 @@ internal class DefaultController : IDefaultController
         throw new NotImplementedException();
     }
 
-    public Coordinates Report()
+    public Coordinates? Report()
     {
+        if (_robot == null)
+            return null;
         return new Coordinates(_robot.PositionX, _robot.PositionY, _robot.DirectionFacing);
     }
 }

@@ -30,7 +30,7 @@ public class DefaultSession
             if (result == Result.OutOfBounds)
                 return Constants.Messages.CannotMove;
             if (result == Result.InitialPlacementMissing)
-                return  Constants.Messages.InitialPlacementMissing;
+                return  Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 
@@ -49,6 +49,8 @@ public class DefaultSession
         if (command == Constants.Commands.Report)
         {
             var result = _controller.Report();
+            if (result == null)
+                return Constants.Messages.CannotReportInitialPlacementMissing;
             switch (result.FDirection)
             {
                 case Direction.North:
