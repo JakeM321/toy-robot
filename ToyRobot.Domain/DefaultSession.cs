@@ -36,13 +36,17 @@ public class DefaultSession
 
         if (command == Constants.Commands.Left)
         {
-            _controller.Left();
+            var result = _controller.Left();
+            if (result == Result.InitialPlacementMissing)
+                return Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 
         if (command == Constants.Commands.Right)
         {
-            _controller.Right();
+            var result = _controller.Right();
+            if (result == Result.InitialPlacementMissing)
+                return Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 

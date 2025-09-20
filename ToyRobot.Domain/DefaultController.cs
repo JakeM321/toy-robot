@@ -13,8 +13,8 @@ internal interface IDefaultController
 {
     Result Place(Coordinates coordinates);
     Result Move();
-    void Left();
-    void Right();
+    Result Left();
+    Result Right();
     Coordinates? Report();
 }
 
@@ -48,12 +48,12 @@ internal class DefaultController : IDefaultController
         return Result.OutOfBounds;
     }
 
-    public void Left()
+    public Result Left()
     {
         throw new NotImplementedException();
     }
 
-    public void Right()
+    public Result Right()
     {
         throw new NotImplementedException();
     }

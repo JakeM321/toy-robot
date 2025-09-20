@@ -159,6 +159,30 @@ public class DefaultSessionTests
             .And(s => s.ResponseIsReturned(Constants.Messages.Ok))
             .BDDfy();
     }
+    
+    [BddfyFact]
+    public void CallingLeftWithoutPlacementReturnsError()
+    {
+        this.Given(s => s.AMockControllerWithPlacementMissingResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("LEFT"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerLeftMethodIsCalled())
+            .And(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing))
+            .BDDfy();
+    }
+
+    [BddfyFact]
+    public void CallingRightWithoutPlacementReturnsError()
+    {
+        this.Given(s => s.AMockControllerWithPlacementMissingResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("RIGHT"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerRightMethodIsCalled())
+            .And(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing))
+            .BDDfy();
+    }
 
     [BddfyTheory]
     [InlineData("REPORT", 2, 1, 1, "2,1,NORTH")]
@@ -241,6 +265,12 @@ public class DefaultSessionTests
         _controller = new Mock<IDefaultController>();
         _controller
             .Setup(c => c.Move())
+            .Returns(Result.InitialPlacementMissing);
+        _controller
+            .Setup(c => c.Left())
+            .Returns(Result.InitialPlacementMissing);
+        _controller
+            .Setup(c => c.Right())
             .Returns(Result.InitialPlacementMissing);
     }
     private void ADefaultSession()
