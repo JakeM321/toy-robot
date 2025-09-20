@@ -1,0 +1,51 @@
+﻿using TestStack.BDDfy;
+using TestStack.BDDfy.Xunit;
+
+namespace ToyRobot.Domain.Tests;
+
+public class DefaultSessionTests
+{
+    [BddfyTheory]
+    [InlineData("ABC", "Command [ABC] not recognised")]
+    [InlineData("MOVE123", "Command [MOVE123] not recognised")]
+    [InlineData("MOVE123 C", "Command [MOVE123] not recognised")]
+    [InlineData("PLACE456 55 23", "Command [PLACE456] not recognised")]
+    public void ReturnsUnrecognisedCommandError(string command, string expectedResponse)
+    {
+        this.Given(s => s.ADefaultSession())
+            .And(s => s.ACommand(command), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned(expectedResponse), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
+    #region BDDfy
+    #region Data
+    private DefaultSession _defaultSession;
+    private string _command;
+    private string _response;
+    #endregion
+    #region Given
+    private void ADefaultSession()
+    {
+        _defaultSession = new DefaultSession();
+    }
+    private void ACommand(string command)
+    {
+        _command = command;
+    }
+    #endregion
+    #region When
+    private void TheCommandIsSubmitted()
+    {
+        _response = _defaultSession.HandleCommand(_command);
+    }
+    #endregion
+    #region Then
+    private void ResponseIsReturned(string expectedResponse)
+    {
+        Assert.Equal(expectedResponse, _response);
+    }
+    #endregion
+    #endregion
+}
