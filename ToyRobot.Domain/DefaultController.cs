@@ -18,7 +18,40 @@ internal interface IDefaultController
     Coordinates Report();
 }
 
-internal class DefaultController
+internal class DefaultController : IDefaultController
 {
-    
+    private TableTop _tableTop;
+    private Robot _robot;
+    public DefaultController()
+    {
+        _tableTop = new TableTop(Constants.DefaultTableTopSize.X, Constants.DefaultTableTopSize.Y);
+    }
+
+    public Result Place(Coordinates coordinates)
+    {
+        if (!_tableTop.IsMoveLegal(coordinates.XPosition, coordinates.YPosition))
+            return Result.OutOfBounds;
+        _robot = _tableTop.PlaceRobot(coordinates.XPosition, coordinates.YPosition, coordinates.FDirection);
+        return Result.Ok;
+    }
+
+    public Result Move()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Left()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Right()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Coordinates Report()
+    {
+        return new Coordinates(_robot.PositionX, _robot.PositionY, _robot.DirectionFacing);
+    }
 }
