@@ -29,6 +29,8 @@ public class DefaultSession
             var result = _controller.Move();
             if (result == Result.OutOfBounds)
                 return Constants.Messages.CannotMove;
+            if (result == Result.InitialPlacementMissing)
+                return  Constants.Messages.InitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 

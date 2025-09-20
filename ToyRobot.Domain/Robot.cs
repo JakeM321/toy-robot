@@ -8,19 +8,19 @@ internal enum Direction
     West = 4
 }
 
-internal interface IMovementValidator
+internal interface IMovementCoordinator
 {
     bool IsMoveLegal(int x, int y);
 }
 
 internal class Robot
 {
-    private IMovementValidator _movementValidator;
+    private IMovementCoordinator _movementValidator;
     private int _posX;
     private int _posY;
     private Direction _directionFacing;
 
-    public Robot(IMovementValidator movementValidator, int posX, int posY, Direction directionFacing)
+    public Robot(IMovementCoordinator movementValidator, int posX, int posY, Direction directionFacing)
     {
         _movementValidator = movementValidator;
         _posX = posX;

@@ -94,6 +94,17 @@ public class DefaultSessionTests
             .BDDfy();
     }
 
+    [BddfyFact]
+    public void ReturnsErrorMessageFromMovementAttemptPlacementMissingResult()
+    {
+        this.Given(s => s.AMockControllerWithPlacementMissingResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned(Constants.Messages.InitialPlacementMissing), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
     [BddfyTheory]
     [InlineData("MOVE")]
     [InlineData("mOvE ")]
@@ -204,6 +215,13 @@ public class DefaultSessionTests
         _controller
             .Setup(c => c.Move())
             .Returns(Result.OutOfBounds);
+    }
+    private void AMockControllerWithPlacementMissingResult()
+    {
+        _controller = new Mock<IDefaultController>();
+        _controller
+            .Setup(c => c.Move())
+            .Returns(Result.InitialPlacementMissing);
     }
     private void ADefaultSession()
     {

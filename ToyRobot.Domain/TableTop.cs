@@ -1,6 +1,6 @@
 ﻿namespace ToyRobot.Domain;
 
-internal class TableTop(int width, int height) : IMovementValidator
+internal class TableTop(int width, int height) : IMovementCoordinator
 {
     private int _width = width;
     private int _height = height;

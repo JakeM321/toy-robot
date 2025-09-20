@@ -5,7 +5,8 @@ internal record Coordinates(int XPosition, int YPosition, Direction FDirection);
 internal enum Result
 {
     Ok,
-    OutOfBounds
+    OutOfBounds,
+    InitialPlacementMissing
 }
 
 internal interface IDefaultController
