@@ -2,9 +2,15 @@ namespace ToyRobot.Domain;
 
 internal record Coordinates(int XPosition, int YPosition, Direction FDirection);
 
+internal enum Result
+{
+    Ok,
+    OutOfBounds
+}
+
 internal interface IDefaultController
 {
-    void Place(Coordinates coordinates);
+    Result Place(Coordinates coordinates);
 }
 
 internal class DefaultController

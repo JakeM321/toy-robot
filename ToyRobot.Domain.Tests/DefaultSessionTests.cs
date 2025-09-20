@@ -49,7 +49,7 @@ public class DefaultSessionTests
     // Grid boundary (5x5) not validated here - the only aim is to map the input arguments correctly
     // and produce an error message if this is not possible
     [InlineData("PLACE 5,6,WEST", 5, 6, 4)]
-    internal void ProcessesPlaceCommand(string command, int expectedXArgument, int expectedYArgument, int expectedFArgument)
+    public void ProcessesPlaceCommand(string command, int expectedXArgument, int expectedYArgument, int expectedFArgument)
     {
         this.Given(s => s.AMockController())
             .And(s => s.ADefaultSession())
@@ -57,6 +57,17 @@ public class DefaultSessionTests
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.TheControllerPlaceMethodIsCalledWith(expectedXArgument, expectedYArgument,
                 (Direction)expectedFArgument))
+            .BDDfy();
+    }
+
+    [BddfyFact]
+    public void ReturnsMessageFromSuccessfulPlaceCommand()
+    {
+        this.Given(s => s.AMockControllerWithSuccessfulPlaceResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned(string.Empty), "The following response is returned: \"{0}\"")
             .BDDfy();
     }
 
@@ -72,8 +83,13 @@ public class DefaultSessionTests
     private void AMockController()
     {
         _controller = new Mock<IDefaultController>();
+    }
+    private void AMockControllerWithSuccessfulPlaceResult()
+    {
+        _controller = new Mock<IDefaultController>();
         _controller
-            .Setup(c => c.Place(It.IsAny<Coordinates>()));
+            .Setup(c => c.Place(It.IsAny<Coordinates>()))
+            .Returns(Result.Ok);
     }
     private void ADefaultSession()
     {

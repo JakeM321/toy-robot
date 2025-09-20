@@ -19,6 +19,7 @@ public class DefaultSession
             if (coordinates == null)
                 return error;
             _controller.Place(coordinates);
+            return string.Empty;
         }
 
         return $"Command [{command}] not recognised";
