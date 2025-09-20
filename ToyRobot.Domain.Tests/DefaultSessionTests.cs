@@ -149,6 +149,22 @@ public class DefaultSessionTests
             .BDDfy();
     }
 
+    [BddfyTheory]
+    [InlineData("REPORT", 2, 1, 1, "2,1,NORTH")]
+    [InlineData("rEpOrT ", 1, 2, 2, "1,2,EAST")]
+    [InlineData("report", 5, 3, 3, "5,3,SOUTH")]
+    [InlineData("report", 7, 1, 4, "7,1,WEST")]
+    public void ProcessesReportCommand(string command, int xPos, int yPos, int direction, string expectedMessage)
+    {
+        this.Given(s => s.AMockControllerReportingCoordinates(xPos, yPos, (Direction)direction))
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand(command), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerReportMethodIsCalled())
+            .And(s => s.ResponseIsReturned(expectedMessage))
+            .BDDfy();
+    }
+
     #region BDDfy
     #region Data
     private Mock<IDefaultController> _controller;
@@ -171,6 +187,13 @@ public class DefaultSessionTests
         _controller
             .Setup(c => c.Move())
             .Returns(Result.Ok);
+    }
+    private void AMockControllerReportingCoordinates(int xPos, int yPos, Direction direction)
+    {
+        _controller = new Mock<IDefaultController>();
+        _controller
+            .Setup(c => c.Report())
+            .Returns(new Coordinates(xPos, yPos, direction));
     }
     private void AMockControllerWithOutOfBoundsResult()
     {
@@ -220,6 +243,11 @@ public class DefaultSessionTests
     private void TheControllerRightMethodIsCalled()
     {
         _controller.Verify(c => c.Right());
+    }
+
+    private void TheControllerReportMethodIsCalled()
+    {
+        _controller.Verify(c => c.Report());
     }
     #endregion
     #endregion

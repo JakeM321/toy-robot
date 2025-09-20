@@ -18,6 +18,7 @@ internal static class Constants
         public const string Move = "MOVE";
         public const string Left = "LEFT";
         public const string Right = "RIGHT";
+        public const string Report = "REPORT";
     }
 
     public static class Parameters

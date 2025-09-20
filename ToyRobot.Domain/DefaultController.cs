@@ -14,6 +14,7 @@ internal interface IDefaultController
     Result Move();
     void Left();
     void Right();
+    Coordinates Report();
 }
 
 internal class DefaultController

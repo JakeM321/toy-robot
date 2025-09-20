@@ -44,6 +44,24 @@ public class DefaultSession
             return Constants.Messages.Ok;
         }
 
+        if (command == Constants.Commands.Report)
+        {
+            var result = _controller.Report();
+            switch (result.FDirection)
+            {
+                case Direction.North:
+                    return $"{result.XPosition},{result.YPosition},{Constants.Directions.North}";
+                case Direction.East:
+                    return $"{result.XPosition},{result.YPosition},{Constants.Directions.East}";
+                case Direction.South:
+                    return $"{result.XPosition},{result.YPosition},{Constants.Directions.South}";
+                case Direction.West:
+                    return $"{result.XPosition},{result.YPosition},{Constants.Directions.West}";
+            }
+
+            return Constants.Messages.Ok;
+        }
+
         return string.Format(Constants.Messages.CommandNotRecognised, command);
     }
 
