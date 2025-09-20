@@ -2,43 +2,73 @@ namespace ToyRobot.Domain;
 
 public class DefaultSession
 {
+    private readonly IDefaultController _controller;
+
+    internal DefaultSession(IDefaultController controller)
+    {
+        _controller = controller;
+    }
+
     public string HandleCommand(string prompt)
     {
         var portions = prompt.Split(' ');
         var command = portions[0];
         if (command.ToUpper() == "PLACE")
         {
-            var error = ValidatePlaceCommand(portions);
-            if (error != null)
+            (var coordinates, string error) = ValidatePlaceCommand(portions);
+            if (coordinates == null)
                 return error;
+            _controller.Place(coordinates);
         }
 
         return $"Command [{command}] not recognised";
     }
 
-    private string? ValidatePlaceCommand(string[] portions)
+    private (Coordinates?, string) ValidatePlaceCommand(string[] portions)
     {
         var arguments = portions.Skip(1).SelectMany(p => p.Split(',')).ToArray();
-        if (!ValidateInt(arguments, 1))
-            return "Invalid X parameter for PLACE command";
-        if (!ValidateInt(arguments, 2))
-            return "Invalid Y parameter for PLACE command";
-        if (!ValidateDirection(arguments, 3))
-            return "Invalid F parameter for PLACE command";
-        return null;
+        var xPos = ValidateInt(arguments, 1);
+        var yPos = ValidateInt(arguments, 2);
+        var fDir = ValidateDirection(arguments, 3);
+
+        if (xPos == null)
+            return (null, "Invalid X parameter for PLACE command");
+        if (yPos == null)
+            return (null, "Invalid Y parameter for PLACE command");
+        if (fDir == null)
+            return (null, "Invalid F parameter for PLACE command");
+
+        var coords = new Coordinates(xPos.Value, yPos.Value, fDir.Value);
+        return (coords, string.Empty);
     }
 
-    private static bool ValidateInt(string[] arguments, int position)
+    private static int? ValidateInt(string[] arguments, int position)
     {
         if (position > arguments.Length)
-            return false;
-        return Int32.TryParse(arguments[position - 1], out _);
+            return null;
+        var success = Int32.TryParse(arguments[position - 1], out var parsed);
+        if (!success)
+            return null;
+        return parsed;
     }
 
-    private static bool ValidateDirection(string[] arguments, int position)
+    private static Direction? ValidateDirection(string[] arguments, int position)
     {
         if (position > arguments.Length)
-            return false;
-        return new[] { "NORTH", "EAST", "SOUTH", "WEST" }.Contains(arguments[position - 1].ToUpper());
+            return null;
+        var direction = arguments[position - 1].ToUpper();
+        switch (direction)
+        {
+            case "NORTH":
+                return Direction.North;
+            case "EAST":
+                return Direction.East;
+            case "SOUTH":
+                return Direction.South;
+            case "WEST":
+                return Direction.West;
+            default:
+                return null;
+        }
     }
 }
