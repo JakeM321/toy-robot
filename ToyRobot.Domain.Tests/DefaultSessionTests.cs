@@ -64,18 +64,18 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsMessageFromSuccessfulPlaceCommand()
     {
-        this.Given(s => s.AMockControllerWithSuccessfulPlaceResult())
+        this.Given(s => s.AMockControllerWithSuccessfulResult())
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.ResponseIsReturned(string.Empty), "The following response is returned: \"{0}\"")
+            .Then(s => s.ResponseIsReturned(Constants.Messages.Ok), "The following response is returned: \"{0}\"")
             .BDDfy();
     }
 
     [BddfyFact]
     public void ReturnsErrorMessageFromPlacementAttemptOutOfBoundsResult()
     {
-        this.Given(s => s.AMockControllerWithOutOfBoundsPlaceResult())
+        this.Given(s => s.AMockControllerWithOutOfBoundsResult())
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
@@ -86,7 +86,7 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsErrorMessageFromMovementAttemptOutOfBoundsResult()
     {
-        this.Given(s => s.AMockControllerWithOutOfBoundsPlaceResult())
+        this.Given(s => s.AMockControllerWithOutOfBoundsResult())
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
@@ -111,11 +111,41 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsMessageFromSuccessfulMoveCommand()
     {
-        this.Given(s => s.AMockControllerWithSuccessfulPlaceResult())
+        this.Given(s => s.AMockControllerWithSuccessfulResult())
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.ResponseIsReturned(string.Empty), "The following response is returned: \"{0}\"")
+            .Then(s => s.ResponseIsReturned(Constants.Messages.Ok), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData("LEFT")]
+    [InlineData("lEfT ")]
+    [InlineData("left")]
+    public void ProcessesLeftCommand(string command)
+    {
+        this.Given(s => s.AMockControllerWithSuccessfulResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand(command), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerLeftMethodIsCalled())
+            .And(s => s.ResponseIsReturned(Constants.Messages.Ok))
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData("RIGHT")]
+    [InlineData("rIgHt ")]
+    [InlineData("right")]
+    public void ProcessesRightCommand(string command)
+    {
+        this.Given(s => s.AMockControllerWithSuccessfulResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand(command), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerRightMethodIsCalled())
+            .And(s => s.ResponseIsReturned(Constants.Messages.Ok))
             .BDDfy();
     }
 
@@ -132,14 +162,17 @@ public class DefaultSessionTests
     {
         _controller = new Mock<IDefaultController>();
     }
-    private void AMockControllerWithSuccessfulPlaceResult()
+    private void AMockControllerWithSuccessfulResult()
     {
         _controller = new Mock<IDefaultController>();
         _controller
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
             .Returns(Result.Ok);
+        _controller
+            .Setup(c => c.Move())
+            .Returns(Result.Ok);
     }
-    private void AMockControllerWithOutOfBoundsPlaceResult()
+    private void AMockControllerWithOutOfBoundsResult()
     {
         _controller = new Mock<IDefaultController>();
         _controller
@@ -179,6 +212,14 @@ public class DefaultSessionTests
     private void TheControllerMoveMethodIsCalled()
     {
         _controller.Verify(c => c.Move());
+    }
+    private void TheControllerLeftMethodIsCalled()
+    {
+        _controller.Verify(c => c.Left());
+    }
+    private void TheControllerRightMethodIsCalled()
+    {
+        _controller.Verify(c => c.Right());
     }
     #endregion
     #endregion

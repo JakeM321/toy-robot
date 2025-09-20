@@ -32,6 +32,18 @@ public class DefaultSession
             return Constants.Messages.Ok;
         }
 
+        if (command == Constants.Commands.Left)
+        {
+            _controller.Left();
+            return Constants.Messages.Ok;
+        }
+
+        if (command == Constants.Commands.Right)
+        {
+            _controller.Right();
+            return Constants.Messages.Ok;
+        }
+
         return string.Format(Constants.Messages.CommandNotRecognised, command);
     }
 
