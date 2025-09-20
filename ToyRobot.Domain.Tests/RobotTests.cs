@@ -13,11 +13,12 @@ public class RobotTests
     [InlineData(2, 2, 4, 1, 2)]
     public void NextMoveIsCorrectlyCalculated(int initialXPos, int initialYPos, int direction, int expectedXPos, int expectedYPos)
     {
+        var directionEnum = (Direction)direction;
         this.Given(s => s.AMovementCoordinatorAllowingAnyMove())
-            .And(s => s.ARobotPlacedAt(initialXPos, initialYPos, (Direction)direction))
+            .And(s => s.ARobotPlacedAt(initialXPos, initialYPos, directionEnum))
             .When(s => s.TheRobotTryMoveMethodIsInvoked())
             .Then(s => s.ResultIsSuccessful())
-            .And(s => s.RobotPositionIs(expectedXPos, expectedYPos, (Direction)direction), "The new position of the robot is: {0}, {1}, {2}")
+            .And(s => s.RobotPositionIs(expectedXPos, expectedYPos, directionEnum), "The new position of the robot is: {0}, {1}, {2}")
             .BDDfy();
     }
 
@@ -29,6 +30,19 @@ public class RobotTests
             .When(s => s.TheRobotTryMoveMethodIsInvoked())
             .Then(s => s.ResultIsUnsuccessful())
             .And(s => s.RobotPositionIs(0, 0, Direction.North), "And the robot's position remains unchanged")
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData(1, 4)]
+    public void LeftTurnResultsInCorrectDirection(int initialDirection, int expectedDirection)
+    {
+        var initialDirectionEnum = (Direction)initialDirection;
+        var expectedDirectionEnum = (Direction)expectedDirection;
+        this.Given(s => s.AMovementCoordinatorAllowingAnyMove())
+            .And(s => s.ARobotPlacedAt(0, 0, initialDirectionEnum), "And a robot facing {2}")
+            .When(s => s.TheRobotTurnLeftMethodIsInvoked())
+            .Then(s => s.RobotPositionIs(0, 0, expectedDirectionEnum), "Then the robot now faces {2}")
             .BDDfy();
     }
 
@@ -63,6 +77,10 @@ public class RobotTests
     private void TheRobotTryMoveMethodIsInvoked()
     {
         _tryMoveResult = _robot.TryMove();
+    }
+    private void TheRobotTurnLeftMethodIsInvoked()
+    {
+        _robot.TurnLeft();
     }
     #endregion
     #region Then

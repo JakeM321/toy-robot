@@ -15,7 +15,7 @@ internal interface IMovementCoordinator
 
 internal class Robot
 {
-    private IMovementCoordinator _movementCoordinator;
+    private readonly IMovementCoordinator _movementCoordinator;
     private int _posX;
     private int _posY;
     private Direction _directionFacing;
@@ -31,6 +31,25 @@ internal class Robot
     public int PositionX => _posX;
     public int PositionY => _posY;
     public Direction DirectionFacing => _directionFacing;
+
+    public void TurnLeft()
+    {
+        switch (_directionFacing)
+        {
+            case Direction.North:
+                _directionFacing = Direction.West;
+                break;
+            case Direction.East:
+                _directionFacing = Direction.North;
+                break;
+            case Direction.South:
+                _directionFacing = Direction.East;
+                break;
+            case Direction.West:
+                _directionFacing = Direction.South;
+                break;
+        }
+    }
 
     public bool TryMove()
     {
