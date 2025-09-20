@@ -12,6 +12,12 @@ internal class TableTop(int width, int height) : IMovementCoordinator
 
     public bool IsMoveLegal(int x, int y)
     {
-        throw new NotImplementedException();
+        var xPosMax = _width - 1;
+        var yPosMax = _height - 1;
+
+        return x <= xPosMax
+            && x >= 0
+            && y <= yPosMax
+            && y >= 0;
     }
 }

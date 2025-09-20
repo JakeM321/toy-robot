@@ -2,6 +2,12 @@ namespace ToyRobot.Domain;
 
 internal static class Constants
 {
+    public static class DefaultTableTopSize
+    {
+        public const int X = 5;
+        public const int Y = 5;
+    }
+
     public static class Messages
     {
         public const string Ok = "";
