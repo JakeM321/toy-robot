@@ -37,7 +37,15 @@ internal class DefaultController : IDefaultController
 
     public Result Move()
     {
-        throw new NotImplementedException();
+        if (_robot == null)
+            return Result.InitialPlacementMissing;
+        var success = _robot.TryMove();
+        if (success)
+            return Result.Ok;
+
+        // NB: The only reason that the move attempt can fail at this stage is if it falls out of bounds.
+        // Adding other failure reasons would require a more sophisticated return type from _robot.TryMove()
+        return Result.OutOfBounds;
     }
 
     public void Left()
