@@ -11,6 +11,7 @@ internal enum Result
 internal interface IDefaultController
 {
     Result Place(Coordinates coordinates);
+    Result Move();
 }
 
 internal class DefaultController

@@ -49,6 +49,7 @@ public class DefaultSessionTests
     // Grid boundary (5x5) not validated here - the only aim is to map the input arguments correctly
     // and produce an error message if this is not possible
     [InlineData("PLACE 5,6,WEST", 5, 6, 4)]
+    [InlineData("PLACE 5  ,  6 ,    WEST", 5, 6, 4)]
     public void ProcessesPlaceCommand(string command, int expectedXArgument, int expectedYArgument, int expectedFArgument)
     {
         this.Given(s => s.AMockController())
@@ -72,13 +73,49 @@ public class DefaultSessionTests
     }
 
     [BddfyFact]
-    public void ReturnsErrorMessageFromOutOfBoundsResult()
+    public void ReturnsErrorMessageFromPlacementAttemptOutOfBoundsResult()
     {
         this.Given(s => s.AMockControllerWithOutOfBoundsPlaceResult())
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(Constants.Messages.CannotPlaceOutsideOfGrid), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
+    [BddfyFact]
+    public void ReturnsErrorMessageFromMovementAttemptOutOfBoundsResult()
+    {
+        this.Given(s => s.AMockControllerWithOutOfBoundsPlaceResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned(Constants.Messages.CannotMove), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
+    [BddfyTheory]
+    [InlineData("MOVE")]
+    [InlineData("mOvE ")]
+    [InlineData("move")]
+    public void ProcessesMoveCommand(string command)
+    {
+        this.Given(s => s.AMockController())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand(command), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.TheControllerMoveMethodIsCalled())
+            .BDDfy();
+    }
+
+    [BddfyFact]
+    public void ReturnsMessageFromSuccessfulMoveCommand()
+    {
+        this.Given(s => s.AMockControllerWithSuccessfulPlaceResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned(string.Empty), "The following response is returned: \"{0}\"")
             .BDDfy();
     }
 
@@ -108,6 +145,9 @@ public class DefaultSessionTests
         _controller
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
             .Returns(Result.OutOfBounds);
+        _controller
+            .Setup(c => c.Move())
+            .Returns(Result.OutOfBounds);
     }
     private void ADefaultSession()
     {
@@ -129,13 +169,16 @@ public class DefaultSessionTests
     {
         Assert.Equal(expectedResponse, _response);
     }
-
     private void TheControllerPlaceMethodIsCalledWith(int expectedXPos, int expectedYPos, Direction expectedDirection)
     {
         _controller.Verify(c => c.Place(It.Is<Coordinates>(
             item => item.XPosition == expectedXPos
             && item.YPosition == expectedYPos
             && item.FDirection == expectedDirection)));
+    }
+    private void TheControllerMoveMethodIsCalled()
+    {
+        _controller.Verify(c => c.Move());
     }
     #endregion
     #endregion

@@ -12,8 +12,8 @@ public class DefaultSession
     public string HandleCommand(string prompt)
     {
         var portions = prompt.Split(' ');
-        var command = portions[0];
-        if (command.ToUpper() == Constants.Commands.Place)
+        var command = portions[0].ToUpper();
+        if (command == Constants.Commands.Place)
         {
             (var coordinates, string error) = ValidatePlaceCommand(portions);
             if (coordinates == null)
@@ -24,12 +24,23 @@ public class DefaultSession
             return Constants.Messages.Ok;
         }
 
+        if (command == Constants.Commands.Move)
+        {
+            var result = _controller.Move();
+            if (result == Result.OutOfBounds)
+                return Constants.Messages.CannotMove;
+            return Constants.Messages.Ok;
+        }
+
         return string.Format(Constants.Messages.CommandNotRecognised, command);
     }
 
     private (Coordinates?, string) ValidatePlaceCommand(string[] portions)
     {
-        var arguments = portions.Skip(1).SelectMany(p => p.Split(',')).ToArray();
+        var arguments = string.Join(string.Empty, portions.Skip(1))
+            .Split(',')
+            .Select(x => x.Trim())
+            .ToArray();
         var xPos = ValidateInt(arguments, 1);
         var yPos = ValidateInt(arguments, 2);
         var fDir = ValidateDirection(arguments, 3);

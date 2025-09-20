@@ -6,6 +6,7 @@ internal static class Constants
     {
         public const string Ok = "";
         public const string CannotPlaceOutsideOfGrid = "Cannot place robot outside of grid boundary";
+        public const string CannotMove = "Further movement would place robot outside of grid";
         public const string ParameterError = "Invalid {0} parameter for {1} command";
 
         public const string CommandNotRecognised = "Command [{0}] not recognised";
@@ -14,6 +15,7 @@ internal static class Constants
     public static class Commands
     {
         public const string Place = "PLACE";
+        public const string Move = "MOVE";
     }
 
     public static class Parameters
