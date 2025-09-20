@@ -78,7 +78,7 @@ public class DefaultSessionTests
             .And(s => s.ADefaultSession())
             .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.ResponseIsReturned("Cannot place robot outside of grid boundary"), "The following response is returned: \"{0}\"")
+            .Then(s => s.ResponseIsReturned(Constants.Messages.CannotPlaceOutsideOfGrid), "The following response is returned: \"{0}\"")
             .BDDfy();
     }
 

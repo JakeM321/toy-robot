@@ -13,18 +13,18 @@ public class DefaultSession
     {
         var portions = prompt.Split(' ');
         var command = portions[0];
-        if (command.ToUpper() == "PLACE")
+        if (command.ToUpper() == Constants.Commands.Place)
         {
             (var coordinates, string error) = ValidatePlaceCommand(portions);
             if (coordinates == null)
                 return error;
             var result = _controller.Place(coordinates);
             if (result == Result.OutOfBounds)
-                return "Cannot place robot outside of grid boundary";
-            return string.Empty;
+                return Constants.Messages.CannotPlaceOutsideOfGrid;
+            return Constants.Messages.Ok;
         }
 
-        return $"Command [{command}] not recognised";
+        return string.Format(Constants.Messages.CommandNotRecognised, command);
     }
 
     private (Coordinates?, string) ValidatePlaceCommand(string[] portions)
@@ -35,11 +35,11 @@ public class DefaultSession
         var fDir = ValidateDirection(arguments, 3);
 
         if (xPos == null)
-            return (null, "Invalid X parameter for PLACE command");
+            return (null, String.Format(Constants.Messages.ParameterError, Constants.Parameters.XPosition, Constants.Commands.Place));
         if (yPos == null)
-            return (null, "Invalid Y parameter for PLACE command");
+            return (null, String.Format(Constants.Messages.ParameterError, Constants.Parameters.YPosition, Constants.Commands.Place));
         if (fDir == null)
-            return (null, "Invalid F parameter for PLACE command");
+            return (null, String.Format(Constants.Messages.ParameterError, Constants.Parameters.FDirection, Constants.Commands.Place));
 
         var coords = new Coordinates(xPos.Value, yPos.Value, fDir.Value);
         return (coords, string.Empty);
@@ -62,13 +62,13 @@ public class DefaultSession
         var direction = arguments[position - 1].ToUpper();
         switch (direction)
         {
-            case "NORTH":
+            case Constants.Directions.North:
                 return Direction.North;
-            case "EAST":
+            case Constants.Directions.East:
                 return Direction.East;
-            case "SOUTH":
+            case Constants.Directions.South:
                 return Direction.South;
-            case "WEST":
+            case Constants.Directions.West:
                 return Direction.West;
             default:
                 return null;
