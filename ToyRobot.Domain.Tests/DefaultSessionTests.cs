@@ -71,6 +71,17 @@ public class DefaultSessionTests
             .BDDfy();
     }
 
+    [BddfyFact]
+    public void ReturnsErrorMessageFromOutOfBoundsResult()
+    {
+        this.Given(s => s.AMockControllerWithOutOfBoundsPlaceResult())
+            .And(s => s.ADefaultSession())
+            .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned("Cannot place robot outside of grid boundary"), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
     #region BDDfy
     #region Data
     private Mock<IDefaultController> _controller;
@@ -90,6 +101,13 @@ public class DefaultSessionTests
         _controller
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
             .Returns(Result.Ok);
+    }
+    private void AMockControllerWithOutOfBoundsPlaceResult()
+    {
+        _controller = new Mock<IDefaultController>();
+        _controller
+            .Setup(c => c.Place(It.IsAny<Coordinates>()))
+            .Returns(Result.OutOfBounds);
     }
     private void ADefaultSession()
     {

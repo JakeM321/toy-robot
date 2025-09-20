@@ -18,7 +18,9 @@ public class DefaultSession
             (var coordinates, string error) = ValidatePlaceCommand(portions);
             if (coordinates == null)
                 return error;
-            _controller.Place(coordinates);
+            var result = _controller.Place(coordinates);
+            if (result == Result.OutOfBounds)
+                return "Cannot place robot outside of grid boundary";
             return string.Empty;
         }
 
