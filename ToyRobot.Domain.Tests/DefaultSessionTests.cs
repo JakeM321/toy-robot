@@ -19,6 +19,26 @@ public class DefaultSessionTests
             .BDDfy();
     }
 
+    // Only aiming for simple validation: returning the first and most immediate problem
+    // instead of listing all of them.
+    [BddfyTheory]
+    // "Place" command remains valid in any casing; the missing X parameter is the
+    // foremost problem (because there are no parameters)
+    [InlineData("pLaCe", "Invalid X parameter for PLACE command")]
+    [InlineData("place", "Invalid X parameter for PLACE command")]
+    [InlineData("PLACE", "Invalid X parameter for PLACE command")]
+    [InlineData("PLACE A,B,C", "Invalid X parameter for PLACE command")]
+    [InlineData("PLACE 1,B,C", "Invalid Y parameter for PLACE command")]
+    [InlineData("PLACE 1,2,C", "Invalid F parameter for PLACE command")]
+    public void ReturnsErrorAtInvalidPlaceCommandParameters(string command, string expectedResponse)
+    {
+        this.Given(s => s.ADefaultSession())
+            .And(s => s.ACommand(command), "and the following command: \"{0}\"")
+            .When(s => s.TheCommandIsSubmitted())
+            .Then(s => s.ResponseIsReturned(expectedResponse), "The following response is returned: \"{0}\"")
+            .BDDfy();
+    }
+
     #region BDDfy
     #region Data
     private DefaultSession _defaultSession;
