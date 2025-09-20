@@ -15,21 +15,49 @@ internal interface IMovementCoordinator
 
 internal class Robot
 {
-    private IMovementCoordinator _movementValidator;
+    private IMovementCoordinator _movementCoordinator;
     private int _posX;
     private int _posY;
     private Direction _directionFacing;
 
-    public Robot(IMovementCoordinator movementValidator, int posX, int posY, Direction directionFacing)
+    public Robot(IMovementCoordinator movementCoordinator, int posX, int posY, Direction directionFacing)
     {
-        _movementValidator = movementValidator;
+        _movementCoordinator = movementCoordinator;
         _posX = posX;
         _posY = posY;
         _directionFacing = directionFacing;
     }
 
-    public void TryMove()
+    public int PositionX => _posX;
+    public int PositionY => _posY;
+    public Direction DirectionFacing => _directionFacing;
+
+    public bool TryMove()
     {
-        throw new NotImplementedException();
+        var proposedXMove = _posX;
+        var proposedYMove = _posY;
+
+        switch (_directionFacing)
+        {
+            case Direction.North:
+                proposedYMove++;
+                break;
+            case Direction.East:
+                proposedXMove++;
+                break;
+            case Direction.South:
+                proposedYMove--;
+                break;
+            case Direction.West:
+                proposedXMove--;
+                break;
+        }
+
+        if (!_movementCoordinator.IsMoveLegal(proposedXMove, proposedYMove))
+            return false;
+
+        _posX = proposedXMove;
+        _posY = proposedYMove;
+        return true;
     }
 }
