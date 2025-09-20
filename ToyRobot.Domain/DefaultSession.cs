@@ -123,4 +123,10 @@ public class DefaultSession
                 return null;
         }
     }
+
+    public static DefaultSession Create()
+    {
+        var controller = new DefaultController();
+        return new DefaultSession(controller);
+    }
 }
