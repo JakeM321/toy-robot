@@ -19,7 +19,7 @@ public class CommandLine
             if (coordinates == null)
                 return error;
             var result = _session.Place(coordinates);
-            if (result == ComandResult.OutOfBounds)
+            if (result == CommandResult.OutOfBounds)
                 return Constants.Messages.CannotPlaceOutsideOfGrid;
             return Constants.Messages.Ok;
         }
@@ -27,9 +27,9 @@ public class CommandLine
         if (command == Constants.Commands.Move)
         {
             var result = _session.Move();
-            if (result == ComandResult.OutOfBounds)
+            if (result == CommandResult.OutOfBounds)
                 return Constants.Messages.CannotMove;
-            if (result == ComandResult.InitialPlacementMissing)
+            if (result == CommandResult.InitialPlacementMissing)
                 return  Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
@@ -37,7 +37,7 @@ public class CommandLine
         if (command == Constants.Commands.Left)
         {
             var result = _session.Left();
-            if (result == ComandResult.InitialPlacementMissing)
+            if (result == CommandResult.InitialPlacementMissing)
                 return Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
@@ -45,7 +45,7 @@ public class CommandLine
         if (command == Constants.Commands.Right)
         {
             var result = _session.Right();
-            if (result == ComandResult.InitialPlacementMissing)
+            if (result == CommandResult.InitialPlacementMissing)
                 return Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }

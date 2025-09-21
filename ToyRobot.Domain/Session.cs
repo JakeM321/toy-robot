@@ -1,6 +1,6 @@
 namespace ToyRobot.Domain;
 
-internal enum ComandResult
+internal enum CommandResult
 {
     Ok,
     OutOfBounds,
@@ -11,10 +11,10 @@ internal record Coordinates(int XPosition, int YPosition, Direction FDirection);
 
 internal interface ISession
 {
-    ComandResult Place(Coordinates coordinates);
-    ComandResult Move();
-    ComandResult Left();
-    ComandResult Right();
+    CommandResult Place(Coordinates coordinates);
+    CommandResult Move();
+    CommandResult Left();
+    CommandResult Right();
     Coordinates? Report();
 }
 
@@ -27,41 +27,41 @@ internal class Session : ISession
         _tableTop = new TableTop(Constants.DefaultTableTopSize.X, Constants.DefaultTableTopSize.Y);
     }
 
-    public ComandResult Place(Coordinates coordinates)
+    public CommandResult Place(Coordinates coordinates)
     {
         if (!_tableTop.IsMoveLegal(coordinates.XPosition, coordinates.YPosition))
-            return ComandResult.OutOfBounds;
+            return CommandResult.OutOfBounds;
         _robot = _tableTop.PlaceRobot(coordinates.XPosition, coordinates.YPosition, coordinates.FDirection);
-        return ComandResult.Ok;
+        return CommandResult.Ok;
     }
 
-    public ComandResult Move()
+    public CommandResult Move()
     {
         if (_robot == null)
-            return ComandResult.InitialPlacementMissing;
+            return CommandResult.InitialPlacementMissing;
         var success = _robot.TryMove();
         if (success)
-            return ComandResult.Ok;
+            return CommandResult.Ok;
 
         // NB: The only reason that the move attempt can fail at this stage is if it falls out of bounds.
         // Adding other failure reasons would require a more sophisticated return type from _robot.TryMove()
-        return ComandResult.OutOfBounds;
+        return CommandResult.OutOfBounds;
     }
 
-    public ComandResult Left()
+    public CommandResult Left()
     {
         if (_robot == null)
-            return ComandResult.InitialPlacementMissing;
+            return CommandResult.InitialPlacementMissing;
         _robot.TurnLeft();
-        return ComandResult.Ok;
+        return CommandResult.Ok;
     }
 
-    public ComandResult Right()
+    public CommandResult Right()
     {
         if (_robot == null)
-            return ComandResult.InitialPlacementMissing;
+            return CommandResult.InitialPlacementMissing;
         _robot.TurnRight();
-        return ComandResult.Ok;
+        return CommandResult.Ok;
     }
 
     public Coordinates? Report()

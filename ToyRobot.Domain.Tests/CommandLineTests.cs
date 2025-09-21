@@ -234,10 +234,10 @@ public class CommandLineTests
         _session = new Mock<ISession>();
         _session
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
-            .Returns(ComandResult.Ok);
+            .Returns(CommandResult.Ok);
         _session
             .Setup(c => c.Move())
-            .Returns(ComandResult.Ok);
+            .Returns(CommandResult.Ok);
     }
     private void AMockSessionReportingCoordinates(int xPos, int yPos, Direction direction)
     {
@@ -258,23 +258,23 @@ public class CommandLineTests
         _session = new Mock<ISession>();
         _session
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
-            .Returns(ComandResult.OutOfBounds);
+            .Returns(CommandResult.OutOfBounds);
         _session
             .Setup(c => c.Move())
-            .Returns(ComandResult.OutOfBounds);
+            .Returns(CommandResult.OutOfBounds);
     }
     private void AMockSessionReportingMissingPlacement()
     {
         _session = new Mock<ISession>();
         _session
             .Setup(c => c.Move())
-            .Returns(ComandResult.InitialPlacementMissing);
+            .Returns(CommandResult.InitialPlacementMissing);
         _session
             .Setup(c => c.Left())
-            .Returns(ComandResult.InitialPlacementMissing);
+            .Returns(CommandResult.InitialPlacementMissing);
         _session
             .Setup(c => c.Right())
-            .Returns(ComandResult.InitialPlacementMissing);
+            .Returns(CommandResult.InitialPlacementMissing);
     }
     private void ACommandLine()
     {

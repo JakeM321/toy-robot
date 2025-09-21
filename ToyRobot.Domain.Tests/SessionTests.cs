@@ -13,7 +13,7 @@ public class SessionTests
     {
         this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(xPos, yPos, Direction.North))
-            .Then(s => s.TheResultIs(ComandResult.OutOfBounds))
+            .Then(s => s.TheResultIs(CommandResult.OutOfBounds))
             .BDDfy();
     }
 
@@ -26,7 +26,7 @@ public class SessionTests
     {
         this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(xPos, yPos, Direction.North))
-            .Then(s => s.TheResultIs(ComandResult.Ok))
+            .Then(s => s.TheResultIs(CommandResult.Ok))
             .BDDfy();
     }
 
@@ -59,7 +59,7 @@ public class SessionTests
     {
         this.Given(s => s.ASession())
             .When(s => s.MoveIsCalled())
-            .Then(s => s.TheResultIs(ComandResult.InitialPlacementMissing))
+            .Then(s => s.TheResultIs(CommandResult.InitialPlacementMissing))
             .BDDfy();
     }
 
@@ -75,7 +75,7 @@ public class SessionTests
             .When(s => s.PlaceIsCalledWith(initialXPos, initialYPos, directionEnum))
             .And(s => s.MoveIsCalled())
             .And(s => s.ReportIsCalled())
-            .Then(s => s.TheResultIs(ComandResult.Ok))
+            .Then(s => s.TheResultIs(CommandResult.Ok))
             .And(s => s.TheReportedPositionIs(expectedXPos, expectedYPos, directionEnum))
             .BDDfy();
     }
@@ -91,7 +91,7 @@ public class SessionTests
         this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(initialXPos, initialYPos, directionEnum))
             .And(s => s.MoveIsCalled())
-            .Then(s => s.TheResultIs(ComandResult.OutOfBounds))
+            .Then(s => s.TheResultIs(CommandResult.OutOfBounds))
             .BDDfy();
     }
 
@@ -100,7 +100,7 @@ public class SessionTests
     {
         this.Given(s => s.ASession())
             .When(s => s.LeftIsCalled())
-            .Then(s => s.TheResultIs(ComandResult.InitialPlacementMissing))
+            .Then(s => s.TheResultIs(CommandResult.InitialPlacementMissing))
             .BDDfy();
     }
 
@@ -118,7 +118,7 @@ public class SessionTests
             .And(s => s.LeftIsCalled())
             .And(s => s.ReportIsCalled())
             .Then(s => s.TheReportedPositionIs(0, 0, expectedDirectionEnum))
-            .And(s => s.TheResultIs(ComandResult.Ok))
+            .And(s => s.TheResultIs(CommandResult.Ok))
             .BDDfy();
     }
 
@@ -127,7 +127,7 @@ public class SessionTests
     {
         this.Given(s => s.ASession())
             .When(s => s.RightIsCalled())
-            .Then(s => s.TheResultIs(ComandResult.InitialPlacementMissing))
+            .Then(s => s.TheResultIs(CommandResult.InitialPlacementMissing))
             .BDDfy();
     }
 
@@ -145,14 +145,14 @@ public class SessionTests
             .And(s => s.RightIsCalled())
             .And(s => s.ReportIsCalled())
             .Then(s => s.TheReportedPositionIs(0, 0, expectedDirectionEnum))
-            .And(s => s.TheResultIs(ComandResult.Ok))
+            .And(s => s.TheResultIs(CommandResult.Ok))
             .BDDfy();
     }
 
     #region BDDfy
     #region Data
     private Session _session;
-    private ComandResult _result;
+    private CommandResult _result;
     private Coordinates _reportedPosition;
     #endregion
     #region Given
@@ -184,7 +184,7 @@ public class SessionTests
     }
     #endregion
     #region Then
-    private void TheResultIs(ComandResult result)
+    private void TheResultIs(CommandResult result)
     {
         Assert.Equal(result, _result);
     }
