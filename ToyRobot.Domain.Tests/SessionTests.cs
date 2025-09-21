@@ -3,7 +3,7 @@ using TestStack.BDDfy.Xunit;
 
 namespace ToyRobot.Domain.Tests;
 
-public class DefaultControllerTests
+public class SessionTests
 {
     [BddfyTheory]
     [InlineData(-1, 0)]
@@ -11,9 +11,9 @@ public class DefaultControllerTests
     [InlineData(8, 10)]
     public void PlacingRobotOutsideOfDefaultBoundaryReturnsOutOfBoundsResult(int xPos, int yPos)
     {
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(xPos, yPos, Direction.North))
-            .Then(s => s.TheResultIs(Result.OutOfBounds))
+            .Then(s => s.TheResultIs(ComandResult.OutOfBounds))
             .BDDfy();
     }
 
@@ -24,9 +24,9 @@ public class DefaultControllerTests
     [InlineData(4, 4)]
     public void PlacingRobotWithinDefaultBoundaryReturnsOkResult(int xPos, int yPos)
     {
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(xPos, yPos, Direction.North))
-            .Then(s => s.TheResultIs(Result.Ok))
+            .Then(s => s.TheResultIs(ComandResult.Ok))
             .BDDfy();
     }
 
@@ -38,7 +38,7 @@ public class DefaultControllerTests
     public void PlacingRobotWithinDefaultBoundarySetsPosition(int xPos, int yPos, int direction)
     {
         var directionEnum = (Direction)direction;
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(xPos, yPos, directionEnum))
             .And(s => s.ReportIsCalled())
             .Then(s => s.TheReportedPositionIs(xPos, yPos, directionEnum))
@@ -48,7 +48,7 @@ public class DefaultControllerTests
     [BddfyFact]
     public void CallingReportWithoutPlacementReturnsNull()
     {
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.ReportIsCalled())
             .Then(s => s.TheReportedPositionIsNull())
             .BDDfy();
@@ -57,9 +57,9 @@ public class DefaultControllerTests
     [BddfyFact]
     public void CallingMoveWithoutPlacementReturnsError()
     {
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.MoveIsCalled())
-            .Then(s => s.TheResultIs(Result.InitialPlacementMissing))
+            .Then(s => s.TheResultIs(ComandResult.InitialPlacementMissing))
             .BDDfy();
     }
 
@@ -71,11 +71,11 @@ public class DefaultControllerTests
     public void CallingMoveAfterPlacementAdvancesRobotPosition(int initialXPos, int initialYPos, int direction, int expectedXPos, int expectedYPos)
     {
         var directionEnum = (Direction)direction;
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(initialXPos, initialYPos, directionEnum))
             .And(s => s.MoveIsCalled())
             .And(s => s.ReportIsCalled())
-            .Then(s => s.TheResultIs(Result.Ok))
+            .Then(s => s.TheResultIs(ComandResult.Ok))
             .And(s => s.TheReportedPositionIs(expectedXPos, expectedYPos, directionEnum))
             .BDDfy();
     }
@@ -88,19 +88,19 @@ public class DefaultControllerTests
     public void CallingIllegalMoveReturnsError(int initialXPos, int initialYPos, int direction)
     {
         var directionEnum = (Direction)direction;
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(initialXPos, initialYPos, directionEnum))
             .And(s => s.MoveIsCalled())
-            .Then(s => s.TheResultIs(Result.OutOfBounds))
+            .Then(s => s.TheResultIs(ComandResult.OutOfBounds))
             .BDDfy();
     }
 
     [BddfyFact]
     public void CallingLeftWithoutPlacementReturnsError()
     {
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.LeftIsCalled())
-            .Then(s => s.TheResultIs(Result.InitialPlacementMissing))
+            .Then(s => s.TheResultIs(ComandResult.InitialPlacementMissing))
             .BDDfy();
     }
 
@@ -113,21 +113,21 @@ public class DefaultControllerTests
     {
         var initialDirectionEnum = (Direction)initialDirection;
         var expectedDirectionEnum = (Direction)expectedDirection;
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(0, 0, initialDirectionEnum))
             .And(s => s.LeftIsCalled())
             .And(s => s.ReportIsCalled())
             .Then(s => s.TheReportedPositionIs(0, 0, expectedDirectionEnum))
-            .And(s => s.TheResultIs(Result.Ok))
+            .And(s => s.TheResultIs(ComandResult.Ok))
             .BDDfy();
     }
 
     [BddfyFact]
     public void CallingRightWithoutPlacementReturnsError()
     {
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.RightIsCalled())
-            .Then(s => s.TheResultIs(Result.InitialPlacementMissing))
+            .Then(s => s.TheResultIs(ComandResult.InitialPlacementMissing))
             .BDDfy();
     }
 
@@ -140,51 +140,51 @@ public class DefaultControllerTests
     {
         var initialDirectionEnum = (Direction)initialDirection;
         var expectedDirectionEnum = (Direction)expectedDirection;
-        this.Given(s => s.ADefaultController())
+        this.Given(s => s.ASession())
             .When(s => s.PlaceIsCalledWith(0, 0, initialDirectionEnum))
             .And(s => s.RightIsCalled())
             .And(s => s.ReportIsCalled())
             .Then(s => s.TheReportedPositionIs(0, 0, expectedDirectionEnum))
-            .And(s => s.TheResultIs(Result.Ok))
+            .And(s => s.TheResultIs(ComandResult.Ok))
             .BDDfy();
     }
 
     #region BDDfy
     #region Data
-    private DefaultController _controller;
-    private Result _result;
+    private Session _session;
+    private ComandResult _result;
     private Coordinates _reportedPosition;
     #endregion
     #region Given
-    private void ADefaultController()
+    private void ASession()
     {
-        _controller = new DefaultController();
+        _session = new Session();
     }
     #endregion
     #region When
     private void PlaceIsCalledWith(int xPosition, int yPosition, Direction direction)
     {
-        _result = _controller.Place(new Coordinates(xPosition, yPosition, direction));
+        _result = _session.Place(new Coordinates(xPosition, yPosition, direction));
     }
     private void ReportIsCalled()
     {
-        _reportedPosition = _controller.Report();
+        _reportedPosition = _session.Report();
     }
     private void MoveIsCalled()
     {
-        _result = _controller.Move();
+        _result = _session.Move();
     }
     private void LeftIsCalled()
     {
-        _result = _controller.Left();
+        _result = _session.Left();
     }
     private void RightIsCalled()
     {
-        _result = _controller.Right();
+        _result = _session.Right();
     }
     #endregion
     #region Then
-    private void TheResultIs(Result result)
+    private void TheResultIs(ComandResult result)
     {
         Assert.Equal(result, _result);
     }

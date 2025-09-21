@@ -1,6 +1,6 @@
 ﻿using ToyRobot.Domain;
 
-var session = DefaultSession.Create();
+var session = CommandLine.Create();
 while (true)
 {
     Console.Write("> ");

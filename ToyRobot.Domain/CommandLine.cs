@@ -1,12 +1,12 @@
 namespace ToyRobot.Domain;
 
-public class DefaultSession
+public class CommandLine
 {
-    private readonly IDefaultController _controller;
+    private readonly ISession _session;
 
-    internal DefaultSession(IDefaultController controller)
+    internal CommandLine(ISession session)
     {
-        _controller = controller;
+        _session = session;
     }
 
     public string HandleCommand(string prompt)
@@ -18,41 +18,41 @@ public class DefaultSession
             (var coordinates, string error) = ValidatePlaceCommand(portions);
             if (coordinates == null)
                 return error;
-            var result = _controller.Place(coordinates);
-            if (result == Result.OutOfBounds)
+            var result = _session.Place(coordinates);
+            if (result == ComandResult.OutOfBounds)
                 return Constants.Messages.CannotPlaceOutsideOfGrid;
             return Constants.Messages.Ok;
         }
 
         if (command == Constants.Commands.Move)
         {
-            var result = _controller.Move();
-            if (result == Result.OutOfBounds)
+            var result = _session.Move();
+            if (result == ComandResult.OutOfBounds)
                 return Constants.Messages.CannotMove;
-            if (result == Result.InitialPlacementMissing)
+            if (result == ComandResult.InitialPlacementMissing)
                 return  Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 
         if (command == Constants.Commands.Left)
         {
-            var result = _controller.Left();
-            if (result == Result.InitialPlacementMissing)
+            var result = _session.Left();
+            if (result == ComandResult.InitialPlacementMissing)
                 return Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 
         if (command == Constants.Commands.Right)
         {
-            var result = _controller.Right();
-            if (result == Result.InitialPlacementMissing)
+            var result = _session.Right();
+            if (result == ComandResult.InitialPlacementMissing)
                 return Constants.Messages.CannotMoveRobotInitialPlacementMissing;
             return Constants.Messages.Ok;
         }
 
         if (command == Constants.Commands.Report)
         {
-            var result = _controller.Report();
+            var result = _session.Report();
             if (result == null)
                 return Constants.Messages.CannotReportInitialPlacementMissing;
             switch (result.FDirection)
@@ -124,9 +124,9 @@ public class DefaultSession
         }
     }
 
-    public static DefaultSession Create()
+    public static CommandLine Create()
     {
-        var controller = new DefaultController();
-        return new DefaultSession(controller);
+        var session = new Session();
+        return new CommandLine(session);
     }
 }

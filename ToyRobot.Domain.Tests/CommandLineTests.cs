@@ -4,7 +4,7 @@ using TestStack.BDDfy.Xunit;
 
 namespace ToyRobot.Domain.Tests;
 
-public class DefaultSessionTests
+public class CommandLineTests
 {
     [BddfyTheory]
     [InlineData("ABC", "Command [ABC] not recognised")]
@@ -13,8 +13,8 @@ public class DefaultSessionTests
     [InlineData("PLACE456 55 23", "Command [PLACE456] not recognised")]
     public void ReturnsUnrecognisedCommandError(string command, string expectedResponse)
     {
-        this.Given(s => s.AMockController())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSession())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(expectedResponse), "The following response is returned: \"{0}\"")
@@ -34,8 +34,8 @@ public class DefaultSessionTests
     [InlineData("PLACE 1,2,C", "Invalid F parameter for PLACE command")]
     public void ReturnsErrorAtInvalidPlaceCommandParameters(string command, string expectedResponse)
     {
-        this.Given(s => s.AMockController())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSession())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(expectedResponse), "The following response is returned: \"{0}\"")
@@ -52,11 +52,11 @@ public class DefaultSessionTests
     [InlineData("PLACE 5  ,  6 ,    WEST", 5, 6, 4)]
     public void ProcessesPlaceCommand(string command, int expectedXArgument, int expectedYArgument, int expectedFArgument)
     {
-        this.Given(s => s.AMockController())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSession())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerPlaceMethodIsCalledWith(expectedXArgument, expectedYArgument,
+            .Then(s => s.TheSessionPlaceMethodIsCalledWith(expectedXArgument, expectedYArgument,
                 (Direction)expectedFArgument))
             .BDDfy();
     }
@@ -64,8 +64,8 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsMessageFromSuccessfulPlaceCommand()
     {
-        this.Given(s => s.AMockControllerWithSuccessfulResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithSuccessfulResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(Constants.Messages.Ok), "The following response is returned: \"{0}\"")
@@ -75,8 +75,8 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsErrorMessageFromPlacementAttemptOutOfBoundsResult()
     {
-        this.Given(s => s.AMockControllerWithOutOfBoundsResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithOutOfBoundsResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("PLACE 1,2,EAST"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(Constants.Messages.CannotPlaceOutsideOfGrid), "The following response is returned: \"{0}\"")
@@ -86,8 +86,8 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsErrorMessageFromMovementAttemptOutOfBoundsResult()
     {
-        this.Given(s => s.AMockControllerWithOutOfBoundsResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithOutOfBoundsResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(Constants.Messages.CannotMove), "The following response is returned: \"{0}\"")
@@ -97,8 +97,8 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReturnsErrorMessageFromMovementAttemptPlacementMissingResult()
     {
-        this.Given(s => s.AMockControllerWithPlacementMissingResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithPlacementMissingResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing), "The following response is returned: \"{0}\"")
@@ -111,19 +111,19 @@ public class DefaultSessionTests
     [InlineData("move")]
     public void ProcessesMoveCommand(string command)
     {
-        this.Given(s => s.AMockController())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSession())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerMoveMethodIsCalled())
+            .Then(s => s.TheSessionMoveMethodIsCalled())
             .BDDfy();
     }
 
     [BddfyFact]
     public void ReturnsMessageFromSuccessfulMoveCommand()
     {
-        this.Given(s => s.AMockControllerWithSuccessfulResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithSuccessfulResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.ResponseIsReturned(Constants.Messages.Ok), "The following response is returned: \"{0}\"")
@@ -136,11 +136,11 @@ public class DefaultSessionTests
     [InlineData("left")]
     public void ProcessesLeftCommand(string command)
     {
-        this.Given(s => s.AMockControllerWithSuccessfulResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithSuccessfulResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerLeftMethodIsCalled())
+            .Then(s => s.TheSessionLeftMethodIsCalled())
             .And(s => s.ResponseIsReturned(Constants.Messages.Ok))
             .BDDfy();
     }
@@ -151,11 +151,11 @@ public class DefaultSessionTests
     [InlineData("right")]
     public void ProcessesRightCommand(string command)
     {
-        this.Given(s => s.AMockControllerWithSuccessfulResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithSuccessfulResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerRightMethodIsCalled())
+            .Then(s => s.TheSessionRightMethodIsCalled())
             .And(s => s.ResponseIsReturned(Constants.Messages.Ok))
             .BDDfy();
     }
@@ -163,11 +163,11 @@ public class DefaultSessionTests
     [BddfyFact]
     public void CallingLeftWithoutPlacementReturnsError()
     {
-        this.Given(s => s.AMockControllerWithPlacementMissingResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithPlacementMissingResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("LEFT"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerLeftMethodIsCalled())
+            .Then(s => s.TheSessionLeftMethodIsCalled())
             .And(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing))
             .BDDfy();
     }
@@ -175,11 +175,11 @@ public class DefaultSessionTests
     [BddfyFact]
     public void CallingRightWithoutPlacementReturnsError()
     {
-        this.Given(s => s.AMockControllerWithPlacementMissingResult())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithPlacementMissingResult())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("RIGHT"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerRightMethodIsCalled())
+            .Then(s => s.TheSessionRightMethodIsCalled())
             .And(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing))
             .BDDfy();
     }
@@ -191,11 +191,11 @@ public class DefaultSessionTests
     [InlineData("report", 7, 1, 4, "7,1,WEST")]
     public void ProcessesReportCommand(string command, int xPos, int yPos, int direction, string expectedMessage)
     {
-        this.Given(s => s.AMockControllerReportingCoordinates(xPos, yPos, (Direction)direction))
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionReportingCoordinates(xPos, yPos, (Direction)direction))
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerReportMethodIsCalled())
+            .Then(s => s.TheSessionReportMethodIsCalled())
             .And(s => s.ResponseIsReturned(expectedMessage))
             .BDDfy();
     }
@@ -203,11 +203,11 @@ public class DefaultSessionTests
     [BddfyFact]
     public void ReportReturnsErrorWhenPlacementMissing()
     {
-        this.Given(s => s.AMockControllerWithNoCoordinatesToReport())
-            .And(s => s.ADefaultSession())
+        this.Given(s => s.AMockSessionWithNoCoordinatesToReport())
+            .And(s => s.ACommandLine())
             .And(s => s.ACommand("REPORT"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
-            .Then(s => s.TheControllerReportMethodIsCalled())
+            .Then(s => s.TheSessionReportMethodIsCalled())
             .And(s => s.ResponseIsReturned(Constants.Messages.CannotReportInitialPlacementMissing), 
                 "and the following response is returned: \"{0}\"")
             .BDDfy();
@@ -215,67 +215,67 @@ public class DefaultSessionTests
 
     #region BDDfy
     #region Data
-    private Mock<IDefaultController> _controller;
-    private DefaultSession _defaultSession;
+    private Mock<ISession> _session;
+    private CommandLine _commandLine;
     private string _command;
     private string _response;
     #endregion
     #region Given
 
-    private void AMockController()
+    private void AMockSession()
     {
-        _controller = new Mock<IDefaultController>();
+        _session = new Mock<ISession>();
     }
-    private void AMockControllerWithSuccessfulResult()
+    private void AMockSessionWithSuccessfulResult()
     {
-        _controller = new Mock<IDefaultController>();
-        _controller
+        _session = new Mock<ISession>();
+        _session
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
-            .Returns(Result.Ok);
-        _controller
+            .Returns(ComandResult.Ok);
+        _session
             .Setup(c => c.Move())
-            .Returns(Result.Ok);
+            .Returns(ComandResult.Ok);
     }
-    private void AMockControllerReportingCoordinates(int xPos, int yPos, Direction direction)
+    private void AMockSessionReportingCoordinates(int xPos, int yPos, Direction direction)
     {
-        _controller = new Mock<IDefaultController>();
-        _controller
+        _session = new Mock<ISession>();
+        _session
             .Setup(c => c.Report())
             .Returns(new Coordinates(xPos, yPos, direction));
     }
-    private void AMockControllerWithNoCoordinatesToReport()
+    private void AMockSessionWithNoCoordinatesToReport()
     {
-        _controller = new Mock<IDefaultController>();
-        _controller
+        _session = new Mock<ISession>();
+        _session
             .Setup(c => c.Report())
             .Returns((Coordinates?)null);
     }
-    private void AMockControllerWithOutOfBoundsResult()
+    private void AMockSessionWithOutOfBoundsResult()
     {
-        _controller = new Mock<IDefaultController>();
-        _controller
+        _session = new Mock<ISession>();
+        _session
             .Setup(c => c.Place(It.IsAny<Coordinates>()))
-            .Returns(Result.OutOfBounds);
-        _controller
+            .Returns(ComandResult.OutOfBounds);
+        _session
             .Setup(c => c.Move())
-            .Returns(Result.OutOfBounds);
+            .Returns(ComandResult.OutOfBounds);
     }
-    private void AMockControllerWithPlacementMissingResult()
+    private void AMockSessionWithPlacementMissingResult()
     {
-        _controller = new Mock<IDefaultController>();
-        _controller
+        _session = new Mock<ISession>();
+        _session
             .Setup(c => c.Move())
-            .Returns(Result.InitialPlacementMissing);
-        _controller
+            .Returns(ComandResult.InitialPlacementMissing);
+        _session
             .Setup(c => c.Left())
-            .Returns(Result.InitialPlacementMissing);
-        _controller
+            .Returns(ComandResult.InitialPlacementMissing);
+        _session
             .Setup(c => c.Right())
-            .Returns(Result.InitialPlacementMissing);
+            .Returns(ComandResult.InitialPlacementMissing);
     }
-    private void ADefaultSession()
+    private void ACommandLine()
     {
-        _defaultSession = new DefaultSession(_controller.Object);
+        _commandLine = new CommandLine(_session.Object);
     }
     private void ACommand(string command)
     {
@@ -285,7 +285,7 @@ public class DefaultSessionTests
     #region When
     private void TheCommandIsSubmitted()
     {
-        _response = _defaultSession.HandleCommand(_command);
+        _response = _commandLine.HandleCommand(_command);
     }
     #endregion
     #region Then
@@ -293,29 +293,29 @@ public class DefaultSessionTests
     {
         Assert.Equal(expectedResponse, _response);
     }
-    private void TheControllerPlaceMethodIsCalledWith(int expectedXPos, int expectedYPos, Direction expectedDirection)
+    private void TheSessionPlaceMethodIsCalledWith(int expectedXPos, int expectedYPos, Direction expectedDirection)
     {
-        _controller.Verify(c => c.Place(It.Is<Coordinates>(
+        _session.Verify(c => c.Place(It.Is<Coordinates>(
             item => item.XPosition == expectedXPos
             && item.YPosition == expectedYPos
             && item.FDirection == expectedDirection)));
     }
-    private void TheControllerMoveMethodIsCalled()
+    private void TheSessionMoveMethodIsCalled()
     {
-        _controller.Verify(c => c.Move());
+        _session.Verify(c => c.Move());
     }
-    private void TheControllerLeftMethodIsCalled()
+    private void TheSessionLeftMethodIsCalled()
     {
-        _controller.Verify(c => c.Left());
+        _session.Verify(c => c.Left());
     }
-    private void TheControllerRightMethodIsCalled()
+    private void TheSessionRightMethodIsCalled()
     {
-        _controller.Verify(c => c.Right());
+        _session.Verify(c => c.Right());
     }
 
-    private void TheControllerReportMethodIsCalled()
+    private void TheSessionReportMethodIsCalled()
     {
-        _controller.Verify(c => c.Report());
+        _session.Verify(c => c.Report());
     }
     #endregion
     #endregion
