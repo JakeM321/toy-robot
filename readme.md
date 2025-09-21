@@ -1,6 +1,6 @@
 ## ToyRobot CLI
 
-This solution consists of three projects:
+This .NET solution consists of three projects:
 
 **ToyRobot.Domain**: Houses the two main layers of business logic:
 
