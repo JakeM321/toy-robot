@@ -58,4 +58,4 @@ When these tests are executed, the runner will pretty-print the output like so:
    	  and the following response is returned: "Cannot move robot that has not yet been placed"
 ```
 
-In this example, the CLI layer is being tested with a mock `Session` that returns a “missing placement” result (`Result.InitialPlacementMissing`) when `Left()` is called. The test is asserting that the CLI layer correctly invokes the `Left()` method of the `Session`, and that the correct CLI message is returned to the user when this `Session` responds with `Result.InitialPlacementMissing`.
+*In this example, the CLI layer is being tested with a mock `Session` that returns a “missing placement” result (`Result.InitialPlacementMissing`) when `Left()` is called. The test is asserting that the CLI layer correctly invokes the `Left()` method of the `Session`, and that the correct CLI message is returned to the user when this `Session` responds with `Result.InitialPlacementMissing`.*
