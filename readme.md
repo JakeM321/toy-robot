@@ -11,7 +11,7 @@ At present, only layer (2), the `CommandLine`, is publicly exposed by the domain
 
 **ToyRobot.Application**: Simple console app for debugging the domain logic. Uses the `CommandLine` from the Domain, directly feeding user input and printing its output.
 
-**ToyRobot.Domain.Tests**: Unit tests and component tests (XUnit) for the ToyRobot domain. See the `ComponentTests` file for proof of the system working as a whole. The component tests are the exact scenarios from the second page of the challenge worksheet.
+**ToyRobot.Domain.Tests**: Unit tests and component tests (XUnit) for the ToyRobot domain. See the [`ComponentTests`](ToyRobot.Domain.Tests/ComponentTests.cs) file for proof of the system working as a whole. The component tests are the exact scenarios from the second page of the challenge worksheet.
 
 **Concerning the unit test format**
 
