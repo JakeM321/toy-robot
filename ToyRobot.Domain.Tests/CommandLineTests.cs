@@ -97,7 +97,7 @@ public class CommandLineTests
     [BddfyFact]
     public void ReturnsErrorMessageFromMovementAttemptPlacementMissingResult()
     {
-        this.Given(s => s.AMockSessionWithPlacementMissingResult())
+        this.Given(s => s.AMockSessionReportingMissingPlacement())
             .And(s => s.ACommandLine())
             .And(s => s.ACommand("MOVE"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
@@ -156,26 +156,28 @@ public class CommandLineTests
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.TheSessionRightMethodIsCalled())
-            .And(s => s.ResponseIsReturned(Constants.Messages.Ok))
+            .And(s => s.ResponseIsReturned(Constants.Messages.Ok), 
+                "and the following response is returned: \"{0}\"")
             .BDDfy();
     }
     
     [BddfyFact]
     public void CallingLeftWithoutPlacementReturnsError()
     {
-        this.Given(s => s.AMockSessionWithPlacementMissingResult())
+        this.Given(s => s.AMockSessionReportingMissingPlacement())
             .And(s => s.ACommandLine())
             .And(s => s.ACommand("LEFT"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.TheSessionLeftMethodIsCalled())
-            .And(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing))
+            .And(s => s.ResponseIsReturned(Constants.Messages.CannotMoveRobotInitialPlacementMissing),
+                "and the following response is returned: \"{0}\"")
             .BDDfy();
     }
 
     [BddfyFact]
     public void CallingRightWithoutPlacementReturnsError()
     {
-        this.Given(s => s.AMockSessionWithPlacementMissingResult())
+        this.Given(s => s.AMockSessionReportingMissingPlacement())
             .And(s => s.ACommandLine())
             .And(s => s.ACommand("RIGHT"), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
@@ -196,7 +198,8 @@ public class CommandLineTests
             .And(s => s.ACommand(command), "and the following command: \"{0}\"")
             .When(s => s.TheCommandIsSubmitted())
             .Then(s => s.TheSessionReportMethodIsCalled())
-            .And(s => s.ResponseIsReturned(expectedMessage))
+            .And(s => s.ResponseIsReturned(expectedMessage),
+                "and the following response is returned: \"{0}\"")
             .BDDfy();
     }
 
@@ -260,7 +263,7 @@ public class CommandLineTests
             .Setup(c => c.Move())
             .Returns(ComandResult.OutOfBounds);
     }
-    private void AMockSessionWithPlacementMissingResult()
+    private void AMockSessionReportingMissingPlacement()
     {
         _session = new Mock<ISession>();
         _session
